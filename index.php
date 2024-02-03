@@ -47,7 +47,7 @@ if (isset($_POST['btningresar'])) {
 
                     switch ($_SESSION['rol']) {
                         case 1:
-                            header('location: user.php'); //User
+                            header('location: usuario.php'); //User
                             break;
                         case 2:
                             header('location: admin.php'); //Admin
