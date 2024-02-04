@@ -103,4 +103,5 @@ if (isset($_POST["submit"])) {
     } else {
         $errors["role"] = "Seleccione un perfil de usuario :(";
     }
+
 } //Fin boton Enviar

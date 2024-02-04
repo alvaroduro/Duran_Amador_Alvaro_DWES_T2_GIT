@@ -36,11 +36,12 @@ if (isset($_POST['btningresar'])) {
                 //Validamos rol
                 $rol = $fila['idRol'];
                 $nick = $fila['nick'];
+                $id = $fila['id'];
                 $_SESSION['rol'] = $rol; //Almacenamos el rol en una sesión
 
                 //Almacenamos nick usuario
                 $_SESSION['nick'] = $nick;
-                echo $_SESSION['nick']; //Mostramos el nick
+                $_SESSION['id'] = $id;
 
                 //Comprobamos el rol
                 if (isset($_SESSION['rol'])) {
