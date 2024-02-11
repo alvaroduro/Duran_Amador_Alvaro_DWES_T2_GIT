@@ -27,6 +27,25 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         //Supervisamos si la inserción se realizó correctamente... 
         if ($query) {
             $msgresultado = '<div class="alert alert-success">' . "El usuario se eliminó correctamente!! :)" . '</div>';
+            //Definimos la instrucción SQL parametrizada
+            try {
+                $sql = "DELETE FROM usuarios WHERE id=:id";
+                // Preparamos la consulta...
+                $query = $conexion->prepare($sql);
+                // y la ejecutamos indicando los valores que tendría cada parámetro
+                $query->execute(['id' => $id]);
+
+                //Supervisamos si la inserción se realizó correctamente... 
+                if ($query) {
+                    $msgresultado = '<div class="alert alert-success">' . "El usuario se eliminó correctamente!! :)" . '</div>';
+                    header("location:admin.php");
+                } // o no :(
+            } catch (PDOException $ex) {
+                $msgresultado = '<div class="alert alert-danger">' . "No se pudo acceder al usuario a elminar!!" . '</div>';
+                //die();
+                echo "Mensaje error: " . $ex->getMessage();
+                header("location:admin.php");
+            }
             header("location:admin.php");
         } // o no :(
     } catch (PDOException $ex) {

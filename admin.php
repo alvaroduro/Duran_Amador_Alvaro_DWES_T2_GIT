@@ -13,7 +13,6 @@ if (!isset($_SESSION['rol'])) {
 //Consulta nombre usuario registrado
 $nickUser = $_SESSION['nick'];
 $id = $_SESSION['id'];
-echo $id;
 ?>
 
 <?php require 'includes/header.php'; ?>
@@ -21,22 +20,52 @@ echo $id;
 </head>
 <!---------------------------------------------------------------->
 <?php include 'config.php' ?>
-<!--Buscamos en la Base de Datos-LISTAR USUARIOS--->
+<!--Buscamos en la Base de Datos-LISTAR ENTRADAS--->
 <?php
 // Mensaje que indicará al usuario si la consulta se realizó correctamente o no
 $msgresultado = "";
+$msgresultadoUser = "";
 
-// Generamos el listado de los usuarios...
+// GENERAMOS LA CONSULTA DE LOS ENTRADAS Y SUS DATOS
 try {  //Definimos la instrucción SQL parametrizada 
-    $sql = "SELECT * FROM usuarios";
+    $sql = "SELECT  
+    entradas.id,
+    entradas.usuario_id,
+    entradas.categoria_id,
+    categorias.nombre,
+    entradas.titulo,
+    entradas.imagen,
+    entradas.descripcion,
+    entradas.fecha
+FROM 
+    entradas
+JOIN 
+    categorias ON entradas.categoria_id = categorias.id
+    ORDER BY entradas.fecha DESC;";
+
     // Preparamos la consulta...
-    $resultsquery = $conexion->query($sql);
+    $query = $conexion->query($sql);
     //Supervisamos si la inserción se realizó correctamente... 
-    if ($resultsquery) {
-        $msgresultado = '<div class="alert alert-success">' . "El listado se realizó correctamente!! :)" . '</div>';
-    } // o no 
+    if ($query) {
+        $msgresultado = '<div class="alert alert-success">' . "El listado de entradas realizó correctamente!! :)" . '</div>';
+    }
 } catch (PDOException $ex) {
     $msgresultado = '<div class="alert alert-danger">' . "El listado no pudo realizarse correctamente!! :( (" . $ex->getMessage() . ')</div>';
+    die();
+}
+
+// GENERAMOS LA CONSULTA DE LOS USUARIOS Y SUS DATOS
+try {  //Definimos la instrucción SQL parametrizada 
+    $sql2 = "SELECT * FROM usuarios";
+
+    // Preparamos la consulta...
+    $query2 = $conexion->query($sql2);
+    //Supervisamos si la inserción se realizó correctamente... 
+    if ($query2) {
+        $msgresultadoUser = '<div class="alert alert-success">' . "El listado de usuarios realizó correctamente!! :)" . '</div>';
+    }
+} catch (PDOException $ex) {
+    $msgresultadoUser = '<div class="alert alert-danger">' . "El listado no pudo realizarse correctamente!! :( (" . $ex->getMessage() . ')</div>';
     die();
 }
 ?>
@@ -51,13 +80,15 @@ try {  //Definimos la instrucción SQL parametrizada
             <h2><img class="alineadoTextoImagen" src="imagenes/iconoLogin.png" width="50px" />Administrador</h2>
             </p>
             <?php echo $msgresultado; ?>
+            <?php echo $msgresultadoUser; ?>
         </div>
     </div>
 
     <h1>Usuarios
         <small class="text-body-secondary">Perfil Administrador</small>
     </h1>
-    <!--Botones-->
+
+    <!--BOTONES INICIO-->
     <div class="container-fluid d-flex">
         <!--Botón para cerrar sesión(salir al login)-->
         <p class="m-2">Cerrar Sesión
@@ -83,7 +114,7 @@ try {  //Definimos la instrucción SQL parametrizada
 
         <!--Botón para Agregar Usuario-->
         <p class="m-2">Agregar Entrada Blog
-            <a class="link-opacity-10-hover" href="agregarEntrada.php"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-2" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <a class="link-opacity-10-hover" href="agregarEntrada.php?id=<?php $id ?>"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-2" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12z" />
                     <path d="M19 16h-12a2 2 0 0 0 -2 2" />
@@ -102,13 +133,74 @@ try {  //Definimos la instrucción SQL parametrizada
                 </svg>
             </p>
         </div>
-
     </div>
 
 
-    <!--Listado Usuarios-->
-    <div class="container col-md-8 m-4">
+    <!--LISTAR ENTRADAS-->
+    <div class="container">
         <table class="table table-bordered">
+            <h2 class="text-center">TABLA ENTRADAS</h2>
+            <!--Titulo Tabla ENTRADAS-->
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>USUARIO_ID</th>
+                    <th>CATEGORIA_ID</th>
+                    <th>NOMBRE CATEGORIA</th>
+                    <th>TITULO</th>
+                    <th>IMAGEN</th>
+                    <th>DESCRIPCION</th>
+                    <th>FECHA</th>
+                    <!-- Añadimos una columna para las operaciones que podremos realizar con cada registro -->
+                    <th>OPERACIONES</th>
+                </tr>
+            </thead>
+            <?php
+
+            //Agregamos resultados de la consulta por campos a la tabla
+            while ($fila = $query->fetch()) {
+                echo '<tr>';
+                echo '<td>' . $fila['id'] . '</td>';
+                echo '<td>' . $fila['usuario_id'] . '</td>';
+                echo '<td>' . $fila['categoria_id'] . '</td>';
+                echo '<td>' . $fila['nombre'] . '</td>';
+                echo '<td>' . $fila['titulo'] . '</td>';
+                if ($fila['imagen'] != null) {
+                    echo '<td><img src="imgEntrada/' . htmlspecialchars($fila['imagen']) . '"with="40" alt="imagen"/></td>';
+                } else {
+                    echo '<td>' . "---" . '</td>';
+                }
+                echo '<td>' . $fila['descripcion'] . '</td>';
+                echo '<td>' . $fila['fecha'] . '</td>';
+
+                //Añadimos a la columna Operaciones
+                echo '<td>' . '<a id="editar" href="actuser.php?id=' . $fila['id'] . '"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit-circle" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 15l8.385 -8.415a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3z" />
+                <path d="M16 5l3 3" />
+                <path d="M9 7.07a7 7 0 0 0 1 13.93a7 7 0 0 0 6.929 -6" />
+
+                </svg></a>' . '<a class="m-2" id="editar" href="eliminarEntrada.php?id=' . $fila['id'] . '"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M4 7l16 0" />
+                <path d="M10 11l0 6" />
+                <path d="M14 11l0 6" />
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                </svg></a>' . '<a class="m-2" id="editar" href="detalleUser.php?id=' . $fila['id'] . '"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-id" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M3 4m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" />
+                <path d="M9 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M15 8l2 0" />
+                <path d="M15 12l2 0" />
+                <path d="M7 16l10 0" />
+                </svg></a>' . '</td>';
+                echo '</tr>';
+            }
+            ?>
+        </table>
+        <table class="table table-bordered">
+        <h2 class="text-center">TABLA USUARIOS</h2>
             <!--Titulo Tabla usuarios-->
             <thead>
                 <tr>
@@ -118,57 +210,14 @@ try {  //Definimos la instrucción SQL parametrizada
                     <th>APELLIDOS</th>
                     <th>EMAIL</th>
                     <th>PASSWORD</th>
-                    <th>IMAGEN_AVATAR</th>
-                    <th>ROL</th>
+                    <th>IMAGEN-AVATAR</th>
                     <!-- Añadimos una columna para las operaciones que podremos realizar con cada registro -->
-                    <th>Operaciones</th>
+                    <th>OPERACIONES</th>
                 </tr>
             </thead>
+
             <?php
-
-            //Agregamos resultados de la consiulta por campos
-            while ($fila = $resultsquery->fetch()) {
-                echo '<tr>';
-                echo '<td>' . $fila['id']   . '</td>';
-                echo '<td>' . $fila['nick']    . '</td>';
-                echo '<td>' . $fila['nombre']    . '</td>';
-                echo '<td>' . $fila['apellidos']    . '</td>';
-                echo '<td>' . $fila['email']    . '</td>';
-                echo '<td>' . $fila['password']    . '</td>';
-                echo '<td>';
-                if ($fila['imagen_avatar'] != null) {
-                    echo '<img src="fotos/' . htmlspecialchars($fila['imagen_avatar']) . '"with="40" alt="imagen-avatar"/>';
-                } else {
-                    echo "---";
-                }
-
-
-                echo '<td>' . $fila['idRol'] . '</td>';
-                //Añadimos a la columna Operaciones
-                echo '<td>' . '<a id="editar" href="actuser.php?id=' . $fila['id'] . '"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit-circle" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M12 15l8.385 -8.415a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3z" />
-                <path d="M16 5l3 3" />
-                <path d="M9 7.07a7 7 0 0 0 1 13.93a7 7 0 0 0 6.929 -6" />
-
-              </svg></a>' . '<a class="m-2" id="editar" href="eliminarUser.php?id=' . $fila['id'] . '"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <path d="M4 7l16 0" />
-              <path d="M10 11l0 6" />
-              <path d="M14 11l0 6" />
-              <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-              <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-            </svg></a>' . '<a class="m-2" id="editar" href="detalleUser.php?id=' . $fila['id'] . '"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-id" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-            <path d="M3 4m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" />
-            <path d="M9 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-            <path d="M15 8l2 0" />
-            <path d="M15 12l2 0" />
-            <path d="M7 16l10 0" />
-          </svg></a>' . '</td>';
-
-                echo '</tr>';
-            }
+            include "listarUsuarios.php";
             ?>
         </table>
     </div>

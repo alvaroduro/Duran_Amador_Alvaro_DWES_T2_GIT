@@ -84,7 +84,7 @@ if (isset($_POST['submit'])) {
             } catch (PDOException $ex) {
                 $msgresultado = '<div class="alert alert-danger">' . "El usuario no pudo registrarse!!" . '</div>';
                 //die();
-                echo "Mensaje error: ".$ex->getMessage();
+                echo "Mensaje error: " . $ex->getMessage();
             }
         } else {
             $msgresultado = '<div class="alert alert-danger">' . "Datos de registro erróneos" . '</div>';
@@ -104,12 +104,12 @@ if (isset($_POST['submit'])) {
         <div class="container cuerpo text-center">
             <p>
             <h2><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-  <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-</svg> Datos de usuario
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                </svg> Datos de usuario
             </h2>
             </p>
             <?php echo $msgresultado ?>
@@ -132,7 +132,8 @@ if (isset($_POST['submit'])) {
                 <!--Campo Nombre-->
                 <label for="nombre">Nombre:
                     <input type="text" name="nombre" class="form-control" <?php if (isset($_POST["nombre"])) {
-                        echo "value='{$_POST["nombre"]}'";} ?> />
+                                                                                echo "value='{$_POST["nombre"]}'";
+                                                                            } ?> />
                     <?php echo  mostrar_error($errors, "nombre"); ?>
                 </label>
                 <br />
@@ -140,7 +141,8 @@ if (isset($_POST['submit'])) {
                 <!--Campo Apellidos-->
                 <label for="apellidos"> Apellidos:
                     <input type="text" name="apellidos" class="form-control" <?php if (isset($_POST["apellidos"])) {
-                        echo  "value='{$_POST["apellidos"]}'";} ?> />
+                                                                                    echo  "value='{$_POST["apellidos"]}'";
+                                                                                } ?> />
                     <?php echo  mostrar_error($errors, "apellidos"); ?>
                 </label>
                 <br />
@@ -148,7 +150,8 @@ if (isset($_POST['submit'])) {
                 <!--Campo Nick-->
                 <label for="nick">Nick:
                     <input type="text" name="nick" class="form-control" <?php if (isset($_POST["nick"])) {
-                        echo "value='{$_POST["nick"]}'";} ?> />
+                                                                            echo "value='{$_POST["nick"]}'";
+                                                                        } ?> />
                     <?php echo  mostrar_error($errors, "nick"); ?>
                 </label>
                 <br />
@@ -156,7 +159,8 @@ if (isset($_POST['submit'])) {
                 <!--Campo Email-->
                 <label for="email">Correo:
                     <input type="email" name="email" class="form-control" <?php if (isset($_POST["email"])) {
-                        echo  "value='{$_POST["email"]}'";} ?> />
+                                                                                echo  "value='{$_POST["email"]}'";
+                                                                            } ?> />
                     <?php echo  mostrar_error($errors, "email"); ?>
                 </label>
                 <br />
@@ -164,7 +168,8 @@ if (isset($_POST['submit'])) {
                 <!--Campo Password-->
                 <label for="password">Contraseña:
                     <input type="password" name="password" class="form-control" <?php if (isset($_POST["password"])) {
-                        echo  "value='{$_POST["password"]}'";} ?> />
+                                                                                    echo  "value='{$_POST["password"]}'";
+                                                                                } ?> />
                     <?php echo  mostrar_error($errors, "password"); ?>
                 </label>
                 <br />
@@ -202,6 +207,14 @@ if (isset($_POST['submit'])) {
 
             </form>
         </div><!--Fin Container-->
+        <!--Botón para cerrar sesión(salir al login)-->
+        <p class="m-2">Atras
+            <a class="link-opacity-10-hover" href="admin.php"> <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M9 14l-4 -4l4 -4" />
+                    <path d="M5 10h11a4 4 0 1 1 0 8h-1" />
+                </svg></a>
+        </p>
     </div> <!--Fin centrar-->
     <hr class="my5">
     <?php require 'includes/footer.php'; ?>
